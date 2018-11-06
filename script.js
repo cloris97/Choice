@@ -60,7 +60,12 @@ var Setting = {
             this.canvas.height / 2 + 15
         );
     },
-    endScreen: function() {},
+    endScreen: function(win) {
+
+    },
+    update: function () {
+
+    },
     draw: function () {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         // bg fill
@@ -95,6 +100,13 @@ var Setting = {
         this.ctx.fill();
         // img
         this.ctx.drawImage(this.topBar, 0, 0, 450, 100);
+    },
+    loop: function () {
+        Game.update();
+        Game.draw();
+
+        // If the game is not over, draw the next frame.
+        if (!Game.over) requestAnimationFrame(Game.loop);
     }
 };
 
