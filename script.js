@@ -1,8 +1,8 @@
 // load cards
 const p0 = new Image();
-p0.src = 'img/card0.png';
+p0.src = 'img/0.png';
 const p1 = new Image();
-p1.src = 'img/card1.jpg';
+p1.src = 'img/1.png';
 // Card(str, Image, array, array)
 function Card(narrative, img, cNo, cYes) {
     this.narrative = narrative;
@@ -33,7 +33,7 @@ var Setting = {
         this.body = 40;
         this.work = 40;
         this.money = 40;
-        this.year = 1;
+        this.round = 0;
         // show the startScreen
         Game.startScreen();
         // listen for keypress
@@ -53,7 +53,7 @@ var Setting = {
     startScreen: function() {
         Game.draw();
         // Change the canvas font size and color
-        this.ctx.font = '20px Courier';
+        this.ctx.font = '20px Menlo';
         this.ctx.fillStyle = "white";
         this.ctx.fillText('Press Any Key to Begin',
             this.canvas.width / 2 - 130,
@@ -64,7 +64,20 @@ var Setting = {
 
     },
     update: function () {
+        if (!this.over) {
+            //end-game conditions
+            if (this.mind >= 100 && this.body >= 100 && this.work >= 100 && this.money >= 100){
+				setTimeout(function () { Game.endScreen(1); }, 700);
+            } else if (this.mind <= 0 || this.body <= 0 || this.work <= 0 || this.money <= 0) {
+				setTimeout(function () { Game.endScreen(0); }, 700);
+            } else if (!cards.length) {
+                // use the backup array
+            }
 
+            // select a card based on year
+
+
+        }
     },
     draw: function () {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -98,6 +111,13 @@ var Setting = {
         this.ctx.rect(450 - 112.5, 100 - this.money, 112.5, this.money);
         this.ctx.fillStyle = "#a6bd39";
         this.ctx.fill();
+
+        // round
+        this.ctx.font = '20px Menlo';
+        this.ctx.fillStyle = "white";
+        this.ctx.fillText(this.round + ' year',
+                this.canvas.width / 2 - 35,
+                620);
         // img
         this.ctx.drawImage(this.topBar, 0, 0, 450, 100);
     },
@@ -112,3 +132,8 @@ var Setting = {
 
 var Game = Object.assign({}, Setting);
 Game.initialize();
+// window.onload = function() {
+//     var c = document.querySelector('canvas');
+//     var ctx = c.getContext("2d");
+//     ctx.drawImage(p0, 50, 150);
+// }
