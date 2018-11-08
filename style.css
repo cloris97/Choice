@@ -1,17 +1,21 @@
 body {
     text-align: center;
     background-color: #2e3418;
-    color: white;
-}
-#topBar {
-    display: none;
+    color: #a6bd39;
+    font-family: 'Menlo', monospace;
 }
 .left {
     position: absolute;
-    left: 20vw;
-    top: 325px;
+    left: 15vw;
+    top: 275px;
+}
+.right {
+    position: absolute;
+    right: 15vw;
+    top: 275px;
 }
 i {
+    padding-top: 10px;
     font-size: 50px;
     background-color: none;
 }
