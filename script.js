@@ -3,137 +3,155 @@ const p0 = new Image();
 p0.src = 'img/0.png';
 const p1 = new Image();
 p1.src = 'img/1.png';
+const p2 = new Image();
+p2.src = 'img/2.png';
+const p3 = new Image();
+p3.src = 'img/3.png';
+const p4 = new Image();
+p4.src = 'img/4.png';
 // Card(str, Image, array, array)
-function Card(narrative, img, cNo, cYes) {
+function Card (narrative, img, cNo, cYes) {
     this.narrative = narrative;
     this.img = img;
     this.n = cNo;
     this.y = cYes;
 }
 // initialize all cards and put in an array
-const c0 = new Card("lorem ipsum", p0, [10, 20, 10,20], [-10, -20, -10, -20]);
-const c1 = new Card("hi", p1, [30, 40, 50, 60], [-30, -40, -50, -60]);
+const c0 = new Card("0", p0, [10, 20, 10,20], [-10, -20, -10, -20]);
+const c1 = new Card("1", p1, [30, 40, 50, 60], [-30, -40, -50, -60]);
+const c2 = new Card("2", p2, [30, 40, 50, 60], [-30, -40, -50, -60]);
+const c3 = new Card("3", p3, [30, 40, 50, 60], [-30, -40, -50, -60]);
+const c4 = new Card("4", p4, [30, 40, 50, 60], [-30, -40, -50, -60]);
 let cards = [];
-for (i=0; i<1; i++) {
-    cards.push("c"+i);
-}
-let cardsBackup = cards.slice(0);
+cards.push(c0);
+cards.push(c1);
+cards.push(c2);
+cards.push(c3);
+cards.push(c4);
+// let cardsBackup = cards.slice(0);
+
+// GLOBAL
+const canvas = document.querySelector('canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = 450;
+canvas.height = 650;
+const topBar = document.getElementById('topBar');
+let mind = 40, body = 40, work = 40, money = 40;
+let round = 0;
+let running = false, over = false;
+let choice;
 
 // game
-var Setting = {
-    initialize: function() {
-        this.canvas = document.querySelector('canvas');
-        this.ctx = this.canvas.getContext('2d');
-        this.canvas.width = 450;
-        this.canvas.height = 650;
-        // img
-        this.topBar = document.getElementById('topBar');
-        // variables
-        this.mind = 40;
-        this.body = 40;
-        this.work = 40;
-        this.money = 40;
-        this.round = 0;
-        // show the startScreen
-        Game.startScreen();
-        // listen for keypress
-        Game.listen();
-    },
-    listen: function () {
-        document.addEventListener('keydown', function (key) {
-            // Handle the 'Press any key to begin' function and start the game.
-            if (Game.running === false) {
-                Game.running = true;
-                window.requestAnimationFrame(Game.loop);
-            }
-            if (key.keyCode == 39) this.choice = 0;
-            if (key.keyCode == 37) this.choice = 1;
-        });
-    },
-    startScreen: function() {
-        Game.draw();
-        // Change the canvas font size and color
-        this.ctx.font = '20px Menlo';
-        this.ctx.fillStyle = "white";
-        this.ctx.fillText('Press Any Key to Begin',
-            this.canvas.width / 2 - 130,
-            this.canvas.height / 2 + 15
-        );
-    },
-    endScreen: function(win) {
-
-    },
-    update: function () {
-        if (!this.over) {
-            //end-game conditions
-            if (this.mind >= 100 && this.body >= 100 && this.work >= 100 && this.money >= 100){
-				setTimeout(function () { Game.endScreen(1); }, 700);
-            } else if (this.mind <= 0 || this.body <= 0 || this.work <= 0 || this.money <= 0) {
-				setTimeout(function () { Game.endScreen(0); }, 700);
-            } else if (!cards.length) {
-                // use the backup array
-            }
-
-            // select a card based on year
-
-
+function init() {
+    startScreen();
+    listen();
+}
+function listen() {
+    document.addEventListener('keydown', function (key) {
+        // Handle the 'Press any key to begin' function and start the game.
+        if (running === false) {
+            running = true;
+            // window.requestAnimationFrame(loop);
+            window.requestAnimationFrame(update);
         }
-    },
-    draw: function () {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        // bg fill
-        this.ctx.beginPath();
-        this.ctx.rect(0, 0, this.canvas.width, this.canvas.height);
-        this.ctx.fillStyle = "#13130e";
-        this.ctx.fill();
-        // bot bar
-        this.ctx.beginPath();
-        this.ctx.rect(0, this.canvas.height - 75, this.canvas.width, 75);
-        this.ctx.fillStyle = "black";
-        this.ctx.fill();
-        // mind
-        this.ctx.beginPath();
-        this.ctx.rect(0, 100 - this.mind, 112.5, this.mind);
-        this.ctx.fillStyle = "#a6bd39";
-        this.ctx.fill();
-        // body
-        this.ctx.beginPath();
-        this.ctx.rect(112.5, 100 - this.body, 112.5, this.body);
-        this.ctx.fillStyle = "#a6bd39";
-        this.ctx.fill();
-        // work
-        this.ctx.beginPath();
-        this.ctx.rect(112.5 * 2, 100 - this.work, 112.5, this.work);
-        this.ctx.fillStyle = "#a6bd39";
-        this.ctx.fill();
-        // money
-        this.ctx.beginPath();
-        this.ctx.rect(450 - 112.5, 100 - this.money, 112.5, this.money);
-        this.ctx.fillStyle = "#a6bd39";
-        this.ctx.fill();
+        if (key.keyCode == 39) {
+            choice = 0;
+        } else if (key.keyCode == 37) {
+            choice = 1;
+        } else {
+            choice = 100;
+        }
+        console.log(choice);
+    });
+}
+function startScreen() {
+    draw();
+    // Change the canvas font size and color
+    ctx.font = '20px Menlo';
+    ctx.fillStyle = "white";
+    ctx.fillText('Press Any Key to Begin',
+        canvas.width / 2 - 130,
+        canvas.height / 2 + 15
+    );
+}
+function endScreen(condition) {
 
-        // round
-        this.ctx.font = '20px Menlo';
-        this.ctx.fillStyle = "white";
-        this.ctx.fillText(this.round + ' year',
-                this.canvas.width / 2 - 35,
-                620);
-        // img
-        this.ctx.drawImage(this.topBar, 0, 0, 450, 100);
-    },
-    loop: function () {
-        Game.update();
-        Game.draw();
-
-        // If the game is not over, draw the next frame.
-        if (!Game.over) requestAnimationFrame(Game.loop);
+}
+function update() {
+    if (!over) {
+        //end-game conditions
+        if (mind >= 100 && body >= 100 && work >= 100 && money >= 100) {
+            setTimeout(function () {
+                Game.endScreen(1);
+            }, 700);
+        } else if (mind <= 0 || body <= 0 || work <= 0 || money <= 0) {
+            setTimeout(function () {
+                Game.endScreen(0);
+            }, 700);
+        } else if (!cards.length) {
+            // use the backup array
+        }
+        // ramdomly select a card
+        let i = Math.floor(Math.random() * 5);
+        // draw card
+        ctx.drawImage(cards[i].img, 50, 150);
+        console.log(cards[i].narrative);
     }
-};
+}
+function drawCard(n) {
 
-var Game = Object.assign({}, Setting);
-Game.initialize();
+}
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // bg fill
+    ctx.beginPath();
+    ctx.rect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#13130e";
+    ctx.fill();
+    // bot bar
+    ctx.beginPath();
+    ctx.rect(0, canvas.height - 75, canvas.width, 75);
+    ctx.fillStyle = "black";
+    ctx.fill();
+    // mind
+    ctx.beginPath();
+    ctx.rect(0, 100 - mind, 112.5, mind);
+    ctx.fillStyle = "#a6bd39";
+    ctx.fill();
+    // body
+    ctx.beginPath();
+    ctx.rect(112.5, 100 - body, 112.5, body);
+    ctx.fillStyle = "#a6bd39";
+    ctx.fill();
+    // work
+    ctx.beginPath();
+    ctx.rect(112.5 * 2, 100 - work, 112.5, work);
+    ctx.fillStyle = "#a6bd39";
+    ctx.fill();
+    // money
+    ctx.beginPath();
+    ctx.rect(450 - 112.5, 100 - money, 112.5, money);
+    ctx.fillStyle = "#a6bd39";
+    ctx.fill();
+
+    // round
+    ctx.font = '20px Menlo';
+    ctx.fillStyle = "white";
+    ctx.fillText(round + ' year', canvas.width / 2 - 35, 620);
+
+    // img
+    ctx.drawImage(topBar, 0, 0, 450, 100);
+}
+function loop() {
+    update();
+    draw();
+    // If the game is not over, draw the next frame.
+    if (!over) requestAnimationFrame(loop);
+}
+
+init();
 // window.onload = function() {
 //     var c = document.querySelector('canvas');
 //     var ctx = c.getContext("2d");
-//     ctx.drawImage(p0, 50, 150);
+//     ctx.drawImage(cards[0].img, 50, 150);
 // }
