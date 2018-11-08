@@ -35,6 +35,7 @@ const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
 canvas.width = 450;
 canvas.height = 650;
+ctx.textAlign = 'center';
 const topBar = document.getElementById('topBar');
 let mind = 40, body = 40, work = 40, money = 40;
 let round = 0;
@@ -66,27 +67,25 @@ function listen() {
 }
 function startScreen() {
     draw();
-    // Change the canvas font size and color
-    ctx.font = '20px Menlo';
-    ctx.fillStyle = "white";
     ctx.fillText('Press Any Key to Begin',
-        canvas.width / 2 - 130,
+        canvas.width / 2,
         canvas.height / 2 + 15
     );
 }
-function endScreen(condition) {
+function endScreen(win) {
 
 }
 function update() {
     if (!over) {
         //end-game conditions
-        if (mind >= 100 && body >= 100 && work >= 100 && money >= 100) {
-            setTimeout(function () {
-                Game.endScreen(1);
-            }, 700);
-        } else if (mind <= 0 || body <= 0 || work <= 0 || money <= 0) {
+        if ((mind >= 100 || mind <= 0) || (body >= 100 || body <= 0) || 
+        (work >= 100 || work <= 0) || (money >= 100 || money <=0)) {
             setTimeout(function () {
                 Game.endScreen(0);
+            }, 700);
+        } else if (round >= 20) { // round > cards array length
+            setTimeout(function () {
+                Game.endScreen(1);
             }, 700);
         } else if (!cards.length) {
             // use the backup array
@@ -94,12 +93,14 @@ function update() {
         // ramdomly select a card
         let i = Math.floor(Math.random() * 5);
         // draw card
-        ctx.drawImage(cards[i].img, 50, 150);
-        console.log(cards[i].narrative);
+        drawCard(i);
     }
 }
-function drawCard(n) {
-
+function drawCard(i) {
+    let currentCard = cards[i];
+    draw();
+    ctx.fillText(currentCard.narrative, canvas.width / 2, 140);
+    ctx.drawImage(currentCard.img, 60, 200);
 }
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -137,7 +138,7 @@ function draw() {
     // round
     ctx.font = '20px Menlo';
     ctx.fillStyle = "white";
-    ctx.fillText(round + ' year', canvas.width / 2 - 35, 620);
+    ctx.fillText(round + ' year', canvas.width / 2, 620);
 
     // img
     ctx.drawImage(topBar, 0, 0, 450, 100);
