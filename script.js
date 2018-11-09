@@ -20,11 +20,11 @@ function Card (narrative, img, cNo, cYes) {
     this.y = cYes;
 }
 // initialize all cards and put in an array
-const c0 = new Card("0", p0, [-10, -10, -10, -10], [10, 10, 10, 10]);
-const c1 = new Card("1", p1, [-10, -10, -10, -10], [10, 10, 10, 10]);
-const c2 = new Card("2", p2, [-10, -10, -10, -10], [10, 10, 10, 10]);
-const c3 = new Card("3", p3, [-10, -10, -10, -10], [10, 10, 10, 10]);
-const c4 = new Card("4", p4, [-10, -10, -10, -10], [10, 10, 10, 10]);
+const c0 = new Card("Favor packaging over toy drink water out of the faucet yet scamper, but jump off balcony", p0, [-20, -20, -20, -20], [10, 10, 10, 10]);
+const c1 = new Card("onto stranger's head milk the cow try to jump onto window and fall while scratching at wall", p1, [-20, -20, -20, -20], [10, 10, 10, 10]);
+const c2 = new Card("and i show my fluffy belly but it's a trap! if you pet it i will tear up your hand", p2, [-20, -20, -20, -20], [10, 10, 10, 10]);
+const c3 = new Card("Small kitty warm kitty little balls of fur attack the dog then pretend like nothing happened howl uncontrollably for no reason for be a nyan cat", p3, [-20, -20, -20, -20], [10, 10, 10, 10]);
+const c4 = new Card("feel great about it", p4, [-20, -20, -20, -20], [10, 10, 10, 10]);
 let cards = [];
 cards.push(c0);
 cards.push(c1);
@@ -39,13 +39,53 @@ const ctx = canvas.getContext('2d');
 canvas.width = 450;
 canvas.height = 650;
 ctx.textAlign = 'center';
-let mind = 50, body = 50, work = 50, money = 50;
-let round = 0;
+let mind, body, work, money;
+let round;
 let running = false, over = false;
 let choice;
 
+// wrapText algorithm from https://www.html5canvastutorials.com/tutorials/html5-canvas-wrap-text-tutorial/
+function wrapText (context, text, x, y, maxWidth, lineHeight) {
+    let words = text.split(' '),
+        line = '',
+        lineCount = 0,
+        i,
+        test,
+        metrics;
+    for (i = 0; i < words.length; i++) {
+        test = words[i];
+        metrics = context.measureText(test);
+        while (metrics.width > maxWidth) {
+            // Determine how much of the word will fit
+            test = test.substring(0, test.length - 1);
+            metrics = context.measureText(test);
+        }
+        if (words[i] != test) {
+            words.splice(i + 1, 0,  words[i].substr(test.length))
+            words[i] = test;
+        }  
+        test = line + words[i] + ' ';  
+        metrics = context.measureText(test);
+        
+        if (metrics.width > maxWidth && i > 0) {
+            context.fillText(line, x, y);
+            line = words[i] + ' ';
+            y += lineHeight;
+            lineCount++;
+        }
+        else {
+            line = test;
+        }
+    }
+    context.fillText(line, x, y);
+}
 // game
 function init() {
+    round = 0;
+    running = false;
+    over = false;
+    mind = 50, body = 50, work = 50, money = 50;
+    cards = backupAarray;
     startScreen();
     listen();
 }
@@ -54,45 +94,53 @@ function listen() {
         // Handle the 'Press any key to begin' function and start the game.
         if (running === false) {
             running = true;
-            // window.requestAnimationFrame(loop);
         }
         if (key.keyCode == 37) {
             choice = 0;
             window.requestAnimationFrame(update);
+            // window.requestAnimationFrame(loop);
         } else if (key.keyCode == 39) {
             choice = 1;
             window.requestAnimationFrame(update);
+            // window.requestAnimationFrame(loop);
         } else {
-            choice = 100;
+            choice = -1;
         }
         console.log(choice);
     });
 }
 function startScreen() {
     drawBg();
-    ctx.fillText('Press Left or Right Arrow Key',
+    ctx.fillText('Press Left or Right Key to Play',
         canvas.width / 2,
         canvas.height / 2 + 15
     );
 }
 function endScreen(win) {
-
+    drawBg();
+    ctx.fillText('You Lost, Restarting in 3 Sec',
+        canvas.width / 2,
+        canvas.height / 2 + 15
+    );
+    over = true;
+    console.log('over');
+    setTimeout(function () {init();}, 3000);
 }
 function update() {
     if (!over) {
         //end-game conditions
         if ((mind >= 100 || mind <= 0) || (body >= 100 || body <= 0) || 
         (work >= 100 || work <= 0) || (money >= 100 || money <=0)) {
-            setTimeout(function () {
-                Game.endScreen(0);
-            }, 700);
+            endScreen(0);
+            console.log('end 1');
+            return;
         } else if (round >= cards.length - 1) { // round > cards array length
-            setTimeout(function () {
-                Game.endScreen(1);
-            }, 700);
+            endScreen(1);
+            return;
         } else if (!cards.length) {
             cards = backupAarray;
         }
+        round++;
         // ramdomly select a card
         let i = Math.floor(Math.random() * cards.length);
         // draw card
@@ -102,7 +150,8 @@ function update() {
 function drawCard(i) {
     let currentCard = cards[i];
     drawBg();
-    ctx.fillText(currentCard.narrative, canvas.width / 2, 140);
+    ctx.font = '18px Menlo';
+    wrapText(ctx, currentCard.narrative, canvas.width / 2, 125, 430, 26);
     ctx.drawImage(currentCard.img, 60, 200);
     if (choice == 0) {
         mind += currentCard.n[0];
@@ -133,22 +182,22 @@ function drawBalance() {
     ctx.fill();
    // mind
    ctx.beginPath();
-   ctx.rect(0, 0, 102.5, 100-mind);
+   ctx.rect(20, 20, 102.5, (100-mind)*.55);
    ctx.fillStyle = "#2e3418";
    ctx.fill();
    // body
    ctx.beginPath();
-   ctx.rect(102.5, 0, 112, 100-body);
+   ctx.rect(102.5 + 20, 20, 102.5, (100 - body) * .55);
    ctx.fillStyle = "#2e3418";
    ctx.fill();
    // work
    ctx.beginPath();
-   ctx.rect(102.5 * 2 + 10, 0, 120, 100-work);
+   ctx.rect(102.5 * 2 + 20, 20, 102.5, (100 - work) * .55);
    ctx.fillStyle = "#2e3418";
    ctx.fill();
    // money
    ctx.beginPath();
-   ctx.rect(450 - 112, 0, 112, 100-money);
+   ctx.rect(102.5 * 3 + 20, 20, 102.5, (100 - money) * .55);
    ctx.fillStyle = "#2e3418";
    ctx.fill();
    // img
@@ -174,8 +223,8 @@ function drawBg() {
     ctx.fillText(round + ' year', canvas.width / 2, 620);
 }
 function loop() {
-    update();
     drawBg();
+    update();
     // If the game is not over, draw the next frame.
     // if (!over) requestAnimationFrame(loop);
 }
