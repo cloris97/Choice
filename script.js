@@ -124,7 +124,7 @@ function init() {
     over = false;
     mind = 50, body = 50, work = 50, money = 50;
     party = false;
-    cards = backupAarray;
+    cards = backupAarray.slice();
     startScreen();
     listen();
 }
@@ -179,11 +179,12 @@ function update() {
             (work >= 100 || work <= 0) || (money >= 100 || money <= 0)) {
             endScreen(0);
             return;
-        } else if (round === cards.length - 1) {
+        } else if (round == cards.length - 1) {
             endScreen(1);
             return;
         } else if (!cards.length) {
-            cards = backupAarray;
+            console.log('backup');
+            cards = backupAarray.slice();
         }
         round++;
         // ramdomly select a card
