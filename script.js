@@ -19,6 +19,7 @@ const prof = new Image();
 prof.src = 'img/prof.png';
 const worker = new Image();
 worker.src = 'img/worker.png';
+
 // Card(str, Image, array, array, str, str)
 function Card(narrative, img, cNo, cYes, l, r) {
     this.narrative = narrative;
@@ -41,9 +42,9 @@ const c5 = new Card("Sam’s weed is making me feel sick, drive me home",
 const c6 = new Card("Bet you can’t take two hits and then down two beers in less than two minutes",
     friend, [10, 10, 0, 0], [-20, -20, 0, -20], "I don't wanna do it", "Let me prove you wrong!");
 const c7 = new Card("Meow", cat, [-5, -5, -5, -5], [5, 5, 5, 5]);
-const c8 = new Card("Prrr Meow Meow", cat, [-10, -10, -10, -10], [10, 10, 10, 10]);
+const c8 = new Card("Prrr Meow Meow", cat, [-5, -5, -5, -5], [5, 5, 5, 5]);
 const c9 = new Card("If Purple People Eaters are real… where do they find purple people to eat?",
-    evil, [-15, -15, -15, -15], [15, 15, 15, 15], "Get out of here!", "What");
+    evil, [-10, -10, -10, -10], [10, 10, 10, 10], "Get out", "What");
 const c10 = new Card("Does cannabis taste good? I want some too", child, [5, 0, 0, 0], [-5, 0, 0, -10]);
 const c11 = new Card("You ran a stop sign, explain yourself", 
     police, [-10, -5, -5, -15], [-10, -5, -5, -15], "Yes", "Yes");
@@ -79,9 +80,8 @@ ctx.textAlign = 'center';
 let mind, body, work, money;
 let round;
 let running = false,
-    over = false,
-    party = false;
-let choice;
+    over = false;
+let choice, party;
 
 // wrapText algorithm from https://www.html5canvastutorials.com/tutorials/html5-canvas-wrap-text-tutorial/
 function wrapText(context, text, x, y, maxWidth, lineHeight) {
@@ -123,6 +123,7 @@ function init() {
     running = false;
     over = false;
     mind = 50, body = 50, work = 50, money = 50;
+    party = false;
     cards = backupAarray;
     startScreen();
     listen();
@@ -133,28 +134,29 @@ function listen() {
         // Handle the 'Press any key to begin' function and start the game.
         if (running === false) {
             running = true;
+            window.requestAnimationFrame(update);
+            return;
         }
         if (key.keyCode == 37) {
+            window.requestAnimationFrame(update);
             choice = 0;
-            window.requestAnimationFrame(update);
-            // window.requestAnimationFrame(loop);
         } else if (key.keyCode == 39) {
-            choice = 1;
             window.requestAnimationFrame(update);
-            // window.requestAnimationFrame(loop);
+            choice = 1;
         } else {
             choice = -1;
         }
-        console.log(choice);
     });
 }
 
 function startScreen() {
     drawBg();
-    ctx.fillText('Press Left or Right Key to Play',
+    ctx.fillText('Press ← or → to Play.',
         canvas.width / 2,
-        canvas.height / 2 + 15
+        canvas.height / 2 - 50
     );
+    wrapText(ctx, "Balance mental health, physical health, school, and money.", 
+        canvas.width / 2 + 8, canvas.height / 2 + 25, 430, 30);
 }
 
 function endScreen(win) {
@@ -167,7 +169,7 @@ function endScreen(win) {
     console.log('over');
     setTimeout(function () {
         init();
-    }, 2000);
+    }, 3000);
 }
 
 function update() {
@@ -176,9 +178,8 @@ function update() {
         if ((mind >= 100 || mind <= 0) || (body >= 100 || body <= 0) ||
             (work >= 100 || work <= 0) || (money >= 100 || money <= 0)) {
             endScreen(0);
-            console.log('end 1');
             return;
-        } else if (round >= cards.length - 1) { // round > cards array length
+        } else if (round === cards.length - 1) {
             endScreen(1);
             return;
         } else if (!cards.length) {
@@ -190,6 +191,7 @@ function update() {
         // draw card
         drawCard(i);
         cards.splice(i, 1);
+        console.log(cards.length);
     }
 }
 
@@ -197,7 +199,7 @@ function drawCard(i) {
     let currentCard = cards[i];
     drawBg();
     ctx.font = '18px Menlo';
-    wrapText(ctx, currentCard.narrative, canvas.width / 2 + 5, 135, 430, 30);
+    wrapText(ctx, currentCard.narrative, canvas.width / 2 + 5, 135, 440, 30);
     ctx.drawImage(currentCard.img, canvas.width / 2 - 300 / 2, 250, 300, 300);
     if (currentCard.l === undefined) {
         document.getElementById('l').innerHTML = 'No';
@@ -276,13 +278,6 @@ function drawBg() {
     ctx.font = '20px Menlo';
     ctx.fillStyle = "white";
     ctx.fillText('Year ' + round, canvas.width / 2, 620);
-}
-
-function loop() {
-    drawBg();
-    update();
-    // If the game is not over, draw the next frame.
-    // if (!over) requestAnimationFrame(loop);
 }
 
 window.onload = function () {
