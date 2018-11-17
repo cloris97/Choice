@@ -34,9 +34,9 @@ const c0 = new Card("I need your help this weekend", parent, [10, 0, -5, 0], [-1
 const c1 = new Card("How are you feeling today", parent, [-5, -5, -5, 0], [5, 5, 5, 0], "Eh", "Great");
 const c2 = new Card("It’s been a while", parent, [-10, 0, 0, -10], [5, 0, 0, 5], "I'm busy", "Hey");
 const c3 = new Card("There’s a massive party next weekend. We should get some weed",
-    friend, [10, 5, 0, -10], [-10, -5, 0, -5], "The dispensary", "I heard Sam has some good cheap stuff");
+    friend, [10, 5, 0, -10], [-10, -5, 0, -5], "The dispensary", "I heard Sam has some<br/>good cheap stuff");
 const c4 = new Card("My younger sibling wants to try, can you buy some for us?",
-    friend, [-10, 0, 0, -10], [10, 0, 0, 0], "The dispensary", "Underage smoking is bad, no way");
+    friend, [-10, 0, 0, -10], [10, 0, 0, 0], "The dispensary", "Underage smoking is bad,<br/>no way");
 const c5 = new Card("Sam’s weed is making me feel sick, drive me home",
     friend, [-5, 0, 0, 0], [10, -20, 0, 0], "No, I smoked too", "I’m always there for you");
 const c6 = new Card("Bet you can’t take two hits and then down two beers in less than two minutes",
@@ -199,7 +199,7 @@ function drawCard(i) {
     let currentCard = cards[i];
     drawBg();
     ctx.font = '18px Menlo';
-    wrapText(ctx, currentCard.narrative, canvas.width / 2 + 5, 135, 440, 30);
+    wrapText(ctx, currentCard.narrative, canvas.width / 2 + 5, 135, 435, 30);
     ctx.drawImage(currentCard.img, canvas.width / 2 - 300 / 2, 250, 300, 300);
     if (currentCard.l === undefined) {
         document.getElementById('l').innerHTML = 'No';

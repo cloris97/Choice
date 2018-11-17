@@ -1,9 +1,11 @@
 body {
     text-align: center;
+    line-height: 30px;
     background-color: #2e3418;
     color: #a6bd39;
-    font-family: 'Menlo', monospace;
-    font-size: 15px;
+    font-family: 'Helvectica Neue', sans-serif;
+    font-weight: bold;
+    font-size: 25px;
 }
 .left {
     text-align: left;
@@ -18,7 +20,6 @@ body {
     top: 275px;
 }
 i {
-    padding-top: 10px;
     font-size: 50px;
     background-color: none;
 }
