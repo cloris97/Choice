@@ -130,22 +130,35 @@ function init() {
 }
 
 function listen() {
+    const left = document.getElementById('left');
+    const right = document.getElementById('right');
     document.addEventListener('keydown', function (key) {
-        // Handle the 'Press any key to begin' function and start the game.
         if (running === false) {
             running = true;
-            window.requestAnimationFrame(update);
+            setTimeout(function () {
+                window.requestAnimationFrame(update);
+            }, 100);
             return;
         }
         if (key.keyCode == 37) {
-            window.requestAnimationFrame(update);
+            left.style.color = 'white';
+            setTimeout(function () {
+                window.requestAnimationFrame(update);
+            }, 300);
             choice = 0;
         } else if (key.keyCode == 39) {
-            window.requestAnimationFrame(update);
+            right.style.color = 'white';
+            setTimeout(function () {
+                window.requestAnimationFrame(update);
+            }, 300);
             choice = 1;
         } else {
             choice = -1;
         }
+    });
+    document.addEventListener('keyup', function (key) {
+        left.style.color = '#a6bd39';
+        right.style.color = '#a6bd39';
     });
 }
 

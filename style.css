@@ -3,17 +3,29 @@ body {
     line-height: 30px;
     background-color: #2e3418;
     color: #a6bd39;
-    font-family: 'Helvectica Neue', sans-serif;
-    font-weight: bold;
-    font-size: 25px;
+    font-family: 'Verdana', sans-serif;
+    font-size: 20px;
 }
-.left {
+#social {
+    position: absolute;
+    bottom: 0;
+    right: 2vw;
+    font-size: 10px;
+    text-align: right;
+    color: #E8F5FD;
+    width: 250px;
+    line-height: 20px;
+}
+a {
+    color: #00acee;
+}
+#left {
     text-align: left;
     position: absolute;
     left: 7vw;
     top: 275px;
 }
-.right {
+#right {
     text-align: right;
     position: absolute;
     right: 7vw;
