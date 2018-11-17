@@ -3,15 +3,18 @@ body {
     background-color: #2e3418;
     color: #a6bd39;
     font-family: 'Menlo', monospace;
+    font-size: 15px;
 }
 .left {
+    text-align: left;
     position: absolute;
-    left: 15vw;
+    left: 7vw;
     top: 275px;
 }
 .right {
+    text-align: right;
     position: absolute;
-    right: 15vw;
+    right: 7vw;
     top: 275px;
 }
 i {

@@ -1,36 +1,73 @@
 // load img
 const topBar = new Image();
 topBar.src = 'img/top.png';
-const p0 = new Image();
-p0.src = 'img/0.png';
-const p1 = new Image();
-p1.src = 'img/1.png';
-const p2 = new Image();
-p2.src = 'img/2.png';
-const p3 = new Image();
-p3.src = 'img/3.png';
-const p4 = new Image();
-p4.src = 'img/4.png';
-
-// Card(str, Image, array, array)
-function Card (narrative, img, cNo, cYes) {
+const cat = new Image();
+cat.src = 'img/cat.png';
+const evil = new Image();
+evil.src = 'img/evil.png';
+const child = new Image();
+child.src = 'img/child.png';
+const friend = new Image();
+friend.src = 'img/friend.png';
+const paramedic = new Image();
+paramedic.src = 'img/paramedic.png';
+const parent = new Image();
+parent.src = 'img/parent.png';
+const police = new Image();
+police.src = 'img/police.png';
+const prof = new Image();
+prof.src = 'img/prof.png';
+const worker = new Image();
+worker.src = 'img/worker.png';
+// Card(str, Image, array, array, str, str)
+function Card(narrative, img, cNo, cYes, l, r) {
     this.narrative = narrative;
     this.img = img;
     this.n = cNo;
     this.y = cYes;
+    this.l = l;
+    this.r = r;
 }
 // initialize all cards and put in an array
-const c0 = new Card("Favor packaging over toy drink water out of the faucet yet scamper, but jump off balcony", p0, [-20, -20, -20, -20], [10, 10, 10, 10]);
-const c1 = new Card("onto stranger's head milk the cow try to jump onto window and fall while scratching at wall", p1, [-20, -20, -20, -20], [10, 10, 10, 10]);
-const c2 = new Card("and i show my fluffy belly but it's a trap! if you pet it i will tear up your hand", p2, [-20, -20, -20, -20], [10, 10, 10, 10]);
-const c3 = new Card("Small kitty warm kitty little balls of fur attack the dog then pretend like nothing happened howl uncontrollably for no reason for be a nyan cat", p3, [-20, -20, -20, -20], [10, 10, 10, 10]);
-const c4 = new Card("feel great about it", p4, [-20, -20, -20, -20], [10, 10, 10, 10]);
+const c0 = new Card("I need your help this weekend", parent, [10, 0, -5, 0], [-10, 0, 5, 0]);
+const c1 = new Card("How are you feeling today", parent, [-5, -5, -5, 0], [5, 5, 5, 0], "Eh", "Great");
+const c2 = new Card("It’s been a while", parent, [-10, 0, 0, -10], [5, 0, 0, 5], "I'm busy", "Hey");
+const c3 = new Card("There’s a massive party next weekend. We should get some weed",
+    friend, [10, 5, 0, -10], [-10, -5, 0, -5], "The dispensary", "I heard Sam has some good cheap stuff");
+const c4 = new Card("My younger sibling wants to try, can you buy some for us?",
+    friend, [-10, 0, 0, -10], [10, 0, 0, 0], "The dispensary", "Underage smoking is bad, no way");
+const c5 = new Card("Sam’s weed is making me feel sick, drive me home",
+    friend, [-5, 0, 0, 0], [10, -20, 0, 0], "No, I smoked too", "I’m always there for you");
+const c6 = new Card("Bet you can’t take two hits and then down two beers in less than two minutes",
+    friend, [10, 10, 0, 0], [-20, -20, 0, -20], "I don't wanna do it", "Let me prove you wrong!");
+const c7 = new Card("Meow", cat, [-5, -5, -5, -5], [5, 5, 5, 5]);
+const c8 = new Card("Prrr Meow Meow", cat, [-10, -10, -10, -10], [10, 10, 10, 10]);
+const c9 = new Card("If Purple People Eaters are real… where do they find purple people to eat?",
+    evil, [-15, -15, -15, -15], [15, 15, 15, 15], "Get out of here!", "What");
+const c10 = new Card("Does cannabis taste good? I want some too", child, [5, 0, 0, 0], [-5, 0, 0, -10]);
+const c11 = new Card("You ran a stop sign, explain yourself", 
+    police, [-10, -5, -5, -15], [-10, -5, -5, -15], "Yes", "Yes");
+const c12 = new Card("Remember not to drive impaired… Marijuana significantly affects judgment, motor coordination, and reaction time",
+    police, [-10, -10, -10, 0], [5, 5, 10, 0], "Sure it does", "Oh I see");
+const c13 = new Card("I hope all your assignments were finished throughout the weekend",
+    prof, [10, -10, -10, -10], [-10, 10, 10, 0], "...", "Yes");
+
+
 let cards = [];
 cards.push(c0);
 cards.push(c1);
 cards.push(c2);
 cards.push(c3);
 cards.push(c4);
+cards.push(c5);
+cards.push(c6);
+cards.push(c7);
+cards.push(c8);
+cards.push(c9);
+cards.push(c10);
+cards.push(c11);
+cards.push(c12);
+cards.push(c13);
 let backupAarray = cards.slice(0);
 
 // GLOBAL
@@ -41,11 +78,13 @@ canvas.height = 650;
 ctx.textAlign = 'center';
 let mind, body, work, money;
 let round;
-let running = false, over = false;
+let running = false,
+    over = false,
+    party = false;
 let choice;
 
 // wrapText algorithm from https://www.html5canvastutorials.com/tutorials/html5-canvas-wrap-text-tutorial/
-function wrapText (context, text, x, y, maxWidth, lineHeight) {
+function wrapText(context, text, x, y, maxWidth, lineHeight) {
     let words = text.split(' '),
         line = '',
         lineCount = 0,
@@ -61,19 +100,18 @@ function wrapText (context, text, x, y, maxWidth, lineHeight) {
             metrics = context.measureText(test);
         }
         if (words[i] != test) {
-            words.splice(i + 1, 0,  words[i].substr(test.length))
+            words.splice(i + 1, 0, words[i].substr(test.length))
             words[i] = test;
-        }  
-        test = line + words[i] + ' ';  
+        }
+        test = line + words[i] + ' ';
         metrics = context.measureText(test);
-        
+
         if (metrics.width > maxWidth && i > 0) {
             context.fillText(line, x, y);
             line = words[i] + ' ';
             y += lineHeight;
             lineCount++;
-        }
-        else {
+        } else {
             line = test;
         }
     }
@@ -89,6 +127,7 @@ function init() {
     startScreen();
     listen();
 }
+
 function listen() {
     document.addEventListener('keydown', function (key) {
         // Handle the 'Press any key to begin' function and start the game.
@@ -109,6 +148,7 @@ function listen() {
         console.log(choice);
     });
 }
+
 function startScreen() {
     drawBg();
     ctx.fillText('Press Left or Right Key to Play',
@@ -116,21 +156,25 @@ function startScreen() {
         canvas.height / 2 + 15
     );
 }
+
 function endScreen(win) {
     drawBg();
-    ctx.fillText('You Lost, Restarting in 3 Sec',
+    ctx.fillText('You survived ' + round + ' years.',
         canvas.width / 2,
         canvas.height / 2 + 15
     );
     over = true;
     console.log('over');
-    setTimeout(function () {init();}, 3000);
+    setTimeout(function () {
+        init();
+    }, 2000);
 }
+
 function update() {
     if (!over) {
         //end-game conditions
-        if ((mind >= 100 || mind <= 0) || (body >= 100 || body <= 0) || 
-        (work >= 100 || work <= 0) || (money >= 100 || money <=0)) {
+        if ((mind >= 100 || mind <= 0) || (body >= 100 || body <= 0) ||
+            (work >= 100 || work <= 0) || (money >= 100 || money <= 0)) {
             endScreen(0);
             console.log('end 1');
             return;
@@ -145,14 +189,23 @@ function update() {
         let i = Math.floor(Math.random() * cards.length);
         // draw card
         drawCard(i);
+        cards.splice(i, 1);
     }
 }
+
 function drawCard(i) {
     let currentCard = cards[i];
     drawBg();
     ctx.font = '18px Menlo';
-    wrapText(ctx, currentCard.narrative, canvas.width / 2, 125, 430, 26);
-    ctx.drawImage(currentCard.img, 60, 200);
+    wrapText(ctx, currentCard.narrative, canvas.width / 2 + 5, 135, 430, 30);
+    ctx.drawImage(currentCard.img, canvas.width / 2 - 300 / 2, 250, 300, 300);
+    if (currentCard.l === undefined) {
+        document.getElementById('l').innerHTML = 'No';
+        document.getElementById('r').innerHTML = 'Yes';
+    } else {
+        document.getElementById('l').innerHTML = currentCard.l;
+        document.getElementById('r').innerHTML = currentCard.r;
+    }
     if (choice == 0) {
         mind += currentCard.n[0];
         body += currentCard.n[1];
@@ -174,35 +227,37 @@ function drawCard(i) {
     money = Math.min(money, 100);
     drawBalance();
 }
+
 function drawBalance() {
     // top bar bg
     ctx.beginPath();
     ctx.rect(0, 0, canvas.width, 100);
     ctx.fillStyle = "#a6bd39";
     ctx.fill();
-   // mind
-   ctx.beginPath();
-   ctx.rect(20, 20, 102.5, (100-mind)*.55);
-   ctx.fillStyle = "#2e3418";
-   ctx.fill();
-   // body
-   ctx.beginPath();
-   ctx.rect(102.5 + 20, 20, 102.5, (100 - body) * .55);
-   ctx.fillStyle = "#2e3418";
-   ctx.fill();
-   // work
-   ctx.beginPath();
-   ctx.rect(102.5 * 2 + 20, 20, 102.5, (100 - work) * .55);
-   ctx.fillStyle = "#2e3418";
-   ctx.fill();
-   // money
-   ctx.beginPath();
-   ctx.rect(102.5 * 3 + 20, 20, 102.5, (100 - money) * .55);
-   ctx.fillStyle = "#2e3418";
-   ctx.fill();
-   // img
-   ctx.drawImage(topBar, 0, 0);
+    // mind
+    ctx.beginPath();
+    ctx.rect(20, 20, 102.5, (100 - mind) * .55);
+    ctx.fillStyle = "#2e3418";
+    ctx.fill();
+    // body
+    ctx.beginPath();
+    ctx.rect(102.5 + 20, 20, 102.5, (100 - body) * .55);
+    ctx.fillStyle = "#2e3418";
+    ctx.fill();
+    // work
+    ctx.beginPath();
+    ctx.rect(102.5 * 2 + 20, 20, 102.5, (100 - work) * .55);
+    ctx.fillStyle = "#2e3418";
+    ctx.fill();
+    // money
+    ctx.beginPath();
+    ctx.rect(102.5 * 3 + 20, 20, 102.5, (100 - money) * .55);
+    ctx.fillStyle = "#2e3418";
+    ctx.fill();
+    // img
+    ctx.drawImage(topBar, 0, 0);
 }
+
 function drawBg() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     // bg fill
@@ -220,8 +275,9 @@ function drawBg() {
     // round
     ctx.font = '20px Menlo';
     ctx.fillStyle = "white";
-    ctx.fillText(round + ' year', canvas.width / 2, 620);
+    ctx.fillText('Year ' + round, canvas.width / 2, 620);
 }
+
 function loop() {
     drawBg();
     update();
