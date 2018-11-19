@@ -44,7 +44,7 @@ const c6 = new Card("Bet you can’t take two hits and then down two beers in le
 const c7 = new Card("Meow", cat, [-5, -5, -5, -5], [5, 5, 5, 5]);
 const c8 = new Card("Prrr Meow Meow", cat, [-5, -5, -5, -5], [5, 5, 5, 5]);
 const c9 = new Card("If Purple People Eaters are real… where do they find purple people to eat?",
-    evil, [-10, -10, -10, -10], [10, 10, 10, 10], "Get out", "What");
+    evil, [-5, -5, -5, -5], [5, 5, 5, 5], "Get out", "What");
 const c10 = new Card("Does cannabis taste good? I want some too", child, [5, 0, 0, 0], [-5, 0, 0, -10]);
 const c11 = new Card("You ran a stop sign, explain yourself", 
     police, [-10, -5, -5, -15], [-10, -5, -5, -15], "Yes", "Yes");
@@ -183,6 +183,8 @@ function endScreen(win) {
     setTimeout(function () {
         init();
     }, 3000);
+    document.getElementById('l').innerHTML = 'No';
+    document.getElementById('r').innerHTML = 'Yes';
 }
 
 function update() {
