@@ -19,6 +19,8 @@ const prof = new Image();
 prof.src = 'img/prof.png';
 const worker = new Image();
 worker.src = 'img/worker.png';
+const brain = new Image();
+brain.src = 'img/brain.png';
 
 // Card(str, Image, array, array, str, str)
 function Card(narrative, img, cNo, cYes, l, r) {
@@ -30,9 +32,10 @@ function Card(narrative, img, cNo, cYes, l, r) {
     this.r = r;
 }
 // initialize all cards and put in an array
-const c0 = new Card("I need your help this weekend", parent, [10, 0, -5, 0], [-10, 0, 5, 0]);
+const c0 = new Card("I need your help this weekend", parent, [-10, 0, 10, 0], [10, 0, -10, 0], "I have a lot of studying<br/>to catch up on",
+"Of course");
 const c1 = new Card("How are you feeling today", parent, [-5, -5, -5, 0], [5, 5, 5, 0], "Eh", "Great");
-const c2 = new Card("It’s been a while", parent, [-10, 0, 0, -10], [5, 0, 0, 5], "I'm busy", "Hey");
+const c2 = new Card("It’s been a while", parent, [-5, 0, 0, -5], [5, 0, 0, 5], "I’ve been busy", "I’ve been doing great!");
 const c3 = new Card("There’s a massive party next weekend. We should get some weed",
     friend, [10, 5, 0, -10], [-10, -5, 0, -5], "The dispensary", "I heard Sam has some<br/>good cheap stuff");
 const c4 = new Card("My younger sibling wants to try, can you buy some for us?",
@@ -41,19 +44,24 @@ const c5 = new Card("Sam’s weed is making me feel sick, drive me home",
     friend, [-5, 0, 0, 0], [10, -20, 0, 0], "No, I smoked too", "I’m always there for you");
 const c6 = new Card("Bet you can’t take two hits and then down two beers in less than two minutes",
     friend, [10, 10, 0, 0], [-20, -20, 0, -20], "I don't wanna do it", "Let me prove you wrong!");
-const c7 = new Card("Meow", cat, [-5, -5, -5, -5], [5, 5, 5, 5]);
+const c7 = new Card("Meow", cat, [-5, -5, -5, -5], [5, 5, 5, 5], "...Leave", "Okay okay I’ll follow you");
 const c8 = new Card("Prrr Meow Meow", cat, [-5, -5, -5, -5], [5, 5, 5, 5]);
 const c9 = new Card("If Purple People Eaters are real… where do they find purple people to eat?",
     evil, [-5, -5, -5, -5], [5, 5, 5, 5], "Get out", "What");
-const c10 = new Card("Does cannabis taste good? I want some too", child, [5, 0, 0, 0], [-5, 0, 0, -10]);
+const c10 = new Card("Does cannabis taste good? I want some too", child, [5, 0, 0, 0], [-5, 0, 0, -10], 
+"There maximum penalties of<br/>14 years in jail for<br/>distributing to youth", "...");
 const c11 = new Card("You ran a stop sign, explain yourself", 
-    police, [-10, -5, -5, -15], [-10, -5, -5, -15], "Yes", "Yes");
+    police, [-5, -5, -5, -5], [-10, -10, -10, -15], "Yes", "It was only a little");
 const c12 = new Card("Remember not to drive impaired… Marijuana significantly affects judgment, motor coordination, and reaction time",
     police, [-10, -10, -10, 0], [5, 5, 10, 0], "Sure it does", "Oh I see");
 const c13 = new Card("I hope all your assignments were finished throughout the weekend",
     prof, [10, -10, -10, -10], [-10, 10, 10, 0], "...", "Yes");
+const c14 = new Card("CBD (cannabidiol) has minimal intoxicating properties but can help relieve insomnia, anxiety, spasticity, pain, and even epilepsy",
+    paramedic, [10, 10, 10, 10], [-10, -10, -10, -10], "The more you know", "Blah Blah Blah");
+const c15 = new Card("You’re not being responsible with your usage",
+    brain, [10, 10, 10, 10], [-10, -10, -10, -10], "I know, I’ll be better", "I know,<br/>but I don’t want to miss out");
 
-
+// push all cards into an array
 let cards = [];
 cards.push(c0);
 cards.push(c1);
@@ -69,6 +77,9 @@ cards.push(c10);
 cards.push(c11);
 cards.push(c12);
 cards.push(c13);
+cards.push(c14);
+cards.push(c15);
+// create a backup of all cards when we've deleted all cards in the original array
 let backupAarray = cards.slice(0);
 
 // GLOBAL
@@ -129,10 +140,12 @@ function init() {
     listen();
 }
 
+// key press listener
 function listen() {
     const left = document.getElementById('left');
     const right = document.getElementById('right');
     document.addEventListener('keydown', function (key) {
+        // set game to be running
         if (running === false) {
             running = true;
             setTimeout(function () {
@@ -156,6 +169,7 @@ function listen() {
             choice = -1;
         }
     });
+    // restore original style
     document.addEventListener('keyup', function (key) {
         left.style.color = '#a6bd39';
         right.style.color = '#a6bd39';
@@ -180,9 +194,11 @@ function endScreen(win) {
     );
     over = true;
     console.log('over');
+    // restart after 3 seconds
     setTimeout(function () {
         init();
     }, 3000);
+    // restore original text
     document.getElementById('l').innerHTML = 'No';
     document.getElementById('r').innerHTML = 'Yes';
 }
@@ -195,9 +211,11 @@ function update() {
             endScreen(0);
             return;
         } else if (round == cards.length - 1) {
+            // made right choices and survived all scenarios
             endScreen(1);
             return;
         } else if (!cards.length) {
+            // used up all cards
             console.log('backup');
             cards = backupAarray.slice();
         }
@@ -214,9 +232,13 @@ function update() {
 function drawCard(i) {
     let currentCard = cards[i];
     drawBg();
+
+    // display narrative
     ctx.font = '18px Menlo';
     wrapText(ctx, currentCard.narrative, canvas.width / 2 + 5, 135, 435, 30);
     ctx.drawImage(currentCard.img, canvas.width / 2 - 300 / 2, 250, 300, 300);
+
+    // change left and right arrow text
     if (currentCard.l === undefined) {
         document.getElementById('l').innerHTML = 'No';
         document.getElementById('r').innerHTML = 'Yes';
@@ -224,6 +246,8 @@ function drawCard(i) {
         document.getElementById('l').innerHTML = currentCard.l;
         document.getElementById('r').innerHTML = currentCard.r;
     }
+
+    // adjust values according to choice
     if (choice == 0) {
         mind += currentCard.n[0];
         body += currentCard.n[1];
@@ -235,6 +259,8 @@ function drawCard(i) {
         work += currentCard.y[2];
         money += currentCard.y[3]
     }
+
+    // make sure the values stay within bounds
     mind = Math.max(mind, 0);
     mind = Math.min(mind, 100);
     body = Math.max(body, 0);
@@ -246,6 +272,7 @@ function drawCard(i) {
     drawBalance();
 }
 
+// update values in topBar
 function drawBalance() {
     // top bar bg
     ctx.beginPath();
